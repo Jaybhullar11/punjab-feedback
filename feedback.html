@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Officer's Performance Meter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        header {
+            background: #ffcc99; /* Light orange */
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #333;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-style: italic;
+            color: #666;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 15px 0 5px;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #otherDeptInput {
+            display: none;
+        }
+        .rating {
+            font-size: 30px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .star {
+            color: #ccc;
+            cursor: pointer;
+        }
+        .star.active {
+            color: #f5b301;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Officer's Performance Meter</h1>
+        <p>Rating your experience, shaping Govt. services</p>
+    </header>
+    <form id="feedbackForm">
+        <label>District:</label>
+        <select id="district" name="district" required>
+            <option value="">Select District</option>
+            <option>Amritsar</option>
+            <option>Barnala</option>
+            <option>Bathinda</option>
+            <option>Faridkot</option>
+            <option>Fatehgarh Sahib</option>
+            <option>Fazilka</option>
+            <option>Ferozepur</option>
+            <option>Gurdaspur</option>
+            <option>Hoshiarpur</option>
+            <option>Jalandhar</option>
+            <option>Kapurthala</option>
+            <option>Ludhiana</option>
+            <option>Malerkotla</option>
+            <option>Mansa</option>
+            <option>Moga</option>
+            <option>Pathankot</option>
+            <option>Patiala</option>
+            <option>Rupnagar</option>
+            <option>Sahibzada Ajit Singh Nagar</option>
+            <option>Sangrur</option>
+            <option>Shahid Bhagat Singh Nagar</option>
+            <option>Sri Muktsar Sahib</option>
+            <option>Tarn Taran</option>
+        </select>
+
+        <label>Department:</label>
+        <select id="department" name="department" onchange="toggleOtherDept()" required>
+            <option value="">Select Department</option>
+            <option>Agriculture</option>
+            <option>Education</option>
+            <option>Health</option>
+            <option>Home Affairs</option>
+            <option>Police</option>
+            <option>Public Works</option>
+            <option>Revenue</option>
+            <option>Transport</option>
+            <option>Water Resources</option>
+            <option value="Other">Other</option>
+        </select>
+        <input type="text" id="otherDeptInput" name="otherDept" placeholder="Specify other department">
+
+        <label>Officer Name:</label>
+        <input type="text" id="officerName" name="officerName" placeholder="Enter officer name" required>
+
+        <label>Officer ID Number:</label>
+        <input type="text" id="officerID" name="officerID" placeholder="Enter officer ID" required>
+
+        <label>Officer Rank:</label>
+        <input type="text" id="officerRank" name="officerRank" placeholder="Enter officer rank" required>
+
+        <label>Rating:</label>
+        <div class="rating">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+        </div>
+        <input type="hidden" id="rating" name="rating" value="0" required>
+
+        <label>Feedback:</label>
+        <textarea id="feedback" name="feedback" rows="4" placeholder="Your feedback..." required></textarea>
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+
+    <script>
+        function toggleOtherDept() {
+            const dept = document.getElementById("department").value;
+            const otherDeptInput = document.getElementById("otherDeptInput");
+            otherDeptInput.style.display = dept === "Other" ? "block" : "none";
+            otherDeptInput.required = dept === "Other";
+        }
+
+        const stars = document.querySelectorAll(".star");
+        const ratingInput = document.getElementById("rating");
+        stars.forEach(star => {
+            star.addEventListener("click", () => {
+                const rating = star.getAttribute("data-value");
+                ratingInput.value = rating;
+                stars.forEach(s => s.classList.remove("active"));
+                star.classList.add("active");
+                let prev = star.previousElementSibling;
+                while (prev) {
+                    prev.classList.add("active");
+                    prev = prev.previousElementSibling;
+                }
+            });
+        });
+
+        document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const formData = {
+                district: document.getElementById("district").value,
+                department: document.getElementById("department").value === "Other" ? 
+                    document.getElementById("otherDeptInput").value : document.getElementById("department").value,
+                officerName: document.getElementById("officerName").value,
+                officerID: document.getElementById("officerID").value,
+                officerRank: document.getElementById("officerRank").value,
+                rating: document.getElementById("rating").value,
+                feedback: document.getElementById("feedback").value,
+                timestamp: new Date().toISOString()
+            };
+
+            // Basic validation
+            if (!formData.district || !formData.department || !formData.officerName || 
+                !formData.officerID || !formData.officerRank || formData.rating === "0" || !formData.feedback) {
+                alert("Please fill all required fields and provide a rating!");
+                return;
+            }
+
+            fetch("https://script.google.com/macros/s/AKfycbwR1MyT7QfwEKhzb4o4cUoT7SZFwxxfwyVkXzcg9m-a8mlSpkJCtv8x_NUZExN5ysbr/exec", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+                mode: "no-cors"
+            })
+            .then(() => {
+                alert("Thank you for your feedback!");
+                document.getElementById("feedbackForm").reset();
+                document.getElementById("otherDeptInput").style.display = "none";
+                stars.forEach(s => s.classList.remove("active"));
+                ratingInput.value = "0";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error submitting feedback: " + error.message);
+            });
+        });
+    </script>
+</body>
+</html>
